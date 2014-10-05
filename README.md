@@ -3,6 +3,9 @@ organize_photos
 
 Python script to organize photos by date
 
+The main organize_photos.py is in "main"; other helper programs for
+use in re-organizing disorganized photos is in "helpers".
+
 Please see comments in organize_photos.py and exif_cache.py
 
 As mentioned in the LICENSE file, this software comes with warranty. Audit
