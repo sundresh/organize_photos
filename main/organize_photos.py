@@ -12,7 +12,13 @@
 # parse Dropbox Camera Uploads filenames as timestamps.
 #
 
-import exifread, PIL.Image, os, os.path, re, shutil, sys, time, traceback
+try:
+  import exifread, PIL.Image
+  USE_LIBRARIES = True
+except:
+  USE_LIBRARIES = False
+
+import os, os.path, re, shutil, sys, time, traceback
 from exif_cache import ExifCache
 
 PHOTOS_ROOT = os.path.expanduser('~/Photos')
@@ -28,7 +34,7 @@ def add_photos(src_dir_path):
             src_path = os.path.join(dirpath, filename)
             upper = filename.upper()
             extension = upper[upper.rindex('.')+1:] if ('.' in upper) else ''
-            if extension in ['JPG', 'JPEG', 'AVI', 'MOV', 'MP4', 'PNG', 'GIF', 'TIF', 'TIFF']:
+            if extension in ['AAE', 'HEIC', 'JPG', 'JPEG', 'AVI', 'MOV', 'MP4', 'PNG', 'GIF', 'TIF', 'TIFF', 'WEBP']:
                 try:
                     if not exif_cache.check(src_path):
                         dest_path = add_photo(src_path)
@@ -80,11 +86,18 @@ def get_photo_name(src_path):
     return photo_name
 
 DATE_TIME_ORIGINAL = 0x9003
-assert exifread.EXIF_TAGS[DATE_TIME_ORIGINAL][0] == 'DateTimeOriginal'
+if USE_LIBRARIES:
+    assert exifread.EXIF_TAGS[DATE_TIME_ORIGINAL][0] == 'DateTimeOriginal'
 DROPBOX_FILE_NAME_REGEX = re.compile('^([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}\.[0-9]{2}\.[0-9]{2})')
 DROPBOX_FILE_NAME_STRPTIME = '%Y-%m-%d %H.%M.%S'
 
-def get_photo_taken_date(src_path):
+def get_photo_taken_date_from_filesystem(src_path):
+    """ Gets a struct_time representing the time and date the photo file was created. """
+    sys.stderr.write('Warning: using filesystem date for file %s\n' % src_path)
+    s = os.stat(src_path)
+    return time.localtime(min(s.st_ctime, s.st_mtime))
+
+def get_photo_taken_date_from_photo_metadata(src_path):
     """ Gets a struct_time representing the time and date the photo was taken. """
     # Both exifread and PIL.Image seem to have incomplete EXIF support (i.e.,
     # they don't work with some images), so try both and hope for the best.
@@ -104,9 +117,13 @@ def get_photo_taken_date(src_path):
             if m is not None:
                 return time.strptime(m.group(1), DROPBOX_FILE_NAME_STRPTIME)
             else:
-                sys.stderr.write('Warning: using filesystem date for file %s\n' % src_path)
-                s = os.stat(src_path)
-                return time.localtime(min(s.st_ctime, s.st_mtime))
+                return get_photo_taken_date_from_filesystem(src_path)
+
+def get_photo_taken_date(src_path):
+    if USE_LIBRARIES:
+        return get_photo_taken_date_from_photo_metadata(src_path)
+    else:
+        return get_photo_taken_date_from_filesystem(src_path)
 
 def get_dir_for_date(photo_date):
     """ Construct the directory path for photos for a particular date. """
@@ -118,7 +135,7 @@ def is_duplicate(photo_path1, photo_date1, photo_path2):
     stat2 = os.stat(photo_path2)
     if stat1.st_size != stat2.st_size:
         return False
-    if photo_date1 != get_photo_taken_date(photo_path2):
+    if USE_LIBRARIES and photo_date1 != get_photo_taken_date(photo_path2):
         return False
     return same_contents(photo_path1, photo_path2)
 
