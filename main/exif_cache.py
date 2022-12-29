@@ -1,5 +1,5 @@
 #
-# organize_photos.py: (C) 2011-2014 Sameer Sundresh. No warranty.
+# organize_photos.py: (C) 2011-2022 Sameer Sundresh. No warranty.
 #
 # exif_cache.py is a helper for organize_photos.py
 #
@@ -52,7 +52,7 @@ class ExifCache(object):
         self.dest_dir_path = dest_dir_path
         self.autosave_interval = autosave_interval
         self._adds_since_last_save = 0
-        print 'Loading EXIF cache...'
+        print('Loading EXIF cache...')
         self.data = self._load()
 
     def _load(self):
@@ -68,7 +68,7 @@ class ExifCache(object):
         # Check that the EXIF cache data is well-formed,
         # and parse all the time strings as timestamps.
         data = { }
-        for entry in exif_cache_data.iteritems():
+        for entry in exif_cache_data.items():
             try:
                 (src_img_path, [dest_img_path, size, time_string]) = entry
                 assert is_direct_rel_path(src_img_path)
@@ -84,12 +84,12 @@ class ExifCache(object):
         if self._adds_since_last_save == 0:
             return
 
-        print 'Saving EXIF cache...'
+        print('Saving EXIF cache...')
 
         # Check that the EXIF cache data is well-formed,
         # and format all the timestamps as time string.
         exif_cache_data = { }
-        for (src_img_path, (dest_img_path, size, timestamp)) in self.data.iteritems():
+        for (src_img_path, (dest_img_path, size, timestamp)) in self.data.items():
             assert is_direct_rel_path(src_img_path)
             assert is_direct_rel_path(dest_img_path)
             assert (type(size) == int) and (size >= 0)

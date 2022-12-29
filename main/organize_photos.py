@@ -1,6 +1,6 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
-# organize_photos.py: (C) 2011-2014 Sameer Sundresh. No warranty.
+# organize_photos.py: (C) 2011-2022 Sameer Sundresh. No warranty.
 #
 # organize_photos.py is a simple system to organize your camera photos by
 # date. It is primarily intended for copying photos off of an SD card
@@ -16,13 +16,13 @@ import exifread, PIL.Image, os, os.path, re, shutil, sys, time, traceback
 from exif_cache import ExifCache
 
 PHOTOS_ROOT = os.path.expanduser('~/Photos')
-os.umask(0027)
-FILE_PERMISSIONS = 0440
+os.umask(0o027)
+FILE_PERMISSIONS = 0o440
 
 
 def add_photos(src_dir_path):
     exif_cache = ExifCache(src_dir_path, PHOTOS_ROOT, autosave_interval=25)
-    print 'Scanning files...'
+    print('Scanning files...')
     for (dirpath, dirnames, filenames) in os.walk(src_dir_path):
         for filename in filenames:
             src_path = os.path.join(dirpath, filename)
@@ -99,7 +99,7 @@ def get_photo_taken_date(src_path):
             date_time_original = image.open(src_path)._getexif().get(DATE_TIME_ORIGINAL)
             return time.strptime(date_time_original, '%Y:%m:%d %H:%M:%S')
         except:
-            print "DROPBOX_FILE_NAME_REGEX.match('%s')" % (os.path.basename(src_path),)
+            print("DROPBOX_FILE_NAME_REGEX.match('%s')" % (os.path.basename(src_path),))
             m = DROPBOX_FILE_NAME_REGEX.match(os.path.basename(src_path))
             if m is not None:
                 return time.strptime(m.group(1), DROPBOX_FILE_NAME_STRPTIME)
@@ -124,8 +124,8 @@ def is_duplicate(photo_path1, photo_date1, photo_path2):
 
 def same_contents(path1, path2):
     """ Determine whether two files contain the same exact contents.  Returns True/False. """
-    f1 = open(path1, 'r')
-    f2 = open(path2, 'r')
+    f1 = open(path1, 'rb')
+    f2 = open(path2, 'rb')
     try:
         return f1.read() == f2.read()
     finally:

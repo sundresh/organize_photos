@@ -23,7 +23,7 @@ for (dirpath, dirnames, filenames) in os.walk(sys.argv[1]):
 				date_time = str(tags[DATE_TIME])
 				software = str(tags[SOFTWARE])
 				if date_time_original != date_time and software == 'QuickTime 7.5':
-					print '%s : %s vs. %s' % (filepath, date_time_original, date_time)
+					print('%s : %s vs. %s' % (filepath, date_time_original, date_time))
 					num_bytes += os.stat(os.path.join(dirpath, filename)).st_size
 
 print num_bytes

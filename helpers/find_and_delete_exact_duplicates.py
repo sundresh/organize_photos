@@ -36,7 +36,7 @@ for (dirpath, dirnames, filenames) in os.walk(sys.argv[1]):
 		filenames = true_duplicate_filenames
 		
 		if len(filenames) > 1:
-			print '%s: %s' % (dirpath, ', '.join("'%s'" % f for f in filenames))
+			print('%s: %s' % (dirpath, ', '.join("'%s'" % f for f in filenames)))
 			num_sets += 1
 			num_bytes += size * (len(filenames) - 1)
 
@@ -45,14 +45,14 @@ for (dirpath, dirnames, filenames) in os.walk(sys.argv[1]):
 					if not AUTO_DELETE:
 						os.system('open ' + ' '.join("'%s'" % os.path.join(dirpath, f) for f in filenames))
 					files_to_delete = [f for f in filenames if not (f.startswith('IMG_') or f.startswith('DSC_'))]
-					print [os.path.join(dirpath, f) for f in files_to_delete]
+					print([os.path.join(dirpath, f) for f in files_to_delete])
 					if AUTO_DELETE or (raw_input('Delete? ') == 'Y'):
 						for f in files_to_delete:
 							cmd = "mv '%s' '%s'" % (os.path.join(dirpath, f), os.path.join(dirpath, 'DELETE_' + f))
-							print cmd
+							print(cmd)
 							os.system(cmd)
 							num_sets_deleted += 1
 							num_bytes_deleted += size * (len(filenames) - 1)
-					print
+					print()
 
-print {'num_sets': num_sets, 'num_bytes': num_bytes, 'num_sets_deleted': num_sets_deleted, 'num_bytes_deleted': num_bytes_deleted}
+print({'num_sets': num_sets, 'num_bytes': num_bytes, 'num_sets_deleted': num_sets_deleted, 'num_bytes_deleted': num_bytes_deleted})

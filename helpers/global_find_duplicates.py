@@ -26,8 +26,8 @@ for (size, filepaths) in size_to_filepaths.items():
 			true_duplicate_filepaths.append(f)
 	filepaths = true_duplicate_filepaths
 	if len(filepaths) > 1:
-		print filepaths
+		print(filepaths)
 		num_sets += 1
 		num_bytes += (len(filepaths) - 1) * size
 
-print (num_sets, num_bytes)
+print((num_sets, num_bytes))
