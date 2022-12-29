@@ -142,7 +142,7 @@ class ExifCache(object):
         timestamp = os.path.getmtime(src_img_path)
         #assert time_close_enough(os.path.getmtime(dest_img_path), timestamp, is_src=True)
         # Write to cache
-        self.data[rel_src_img_path] = (rel_dest_img_path, size, timestamp)
+        self.data[rel_src_img_path] = (rel_dest_img_path, size, int(timestamp))
 
         # Autosave
         self._adds_since_last_save += 1

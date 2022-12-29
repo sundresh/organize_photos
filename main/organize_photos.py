@@ -77,10 +77,9 @@ def add_photo(src_path):
     return dest_path
 
 def get_photo_name(src_path):
-    """ Gets a photo's name based on its path, normalizing away iPhoto name modifications. """
+    """ Gets a photo's name based on its path, normalizing away disambiguating copy numbers. """
     photo_name = os.path.basename(src_path)
-    #matches = re.match('^(?P<basename>[A-Za-z]+_[0-9]+)_[0-9]+\.(?P<extension>[A-Za-z]+)$', photo_name)
-    matches = re.match('^(?P<basename>[A-Za-z]+[_0-9]+)\.(?P<extension>[A-Za-z]+)$', photo_name)
+    matches = re.match('^(?P<basename>[A-Za-z]+[_0-9]+)(?P<copy_num> [0-9]+)?\.(?P<extension>[A-Za-z]+)$', photo_name)
     if matches:
         photo_name = '%s.%s' % (matches.group('basename'), matches.group('extension'))
     return photo_name
@@ -154,7 +153,7 @@ def alphabetic(num):
     letters = []
     while num >= 0:
         letters.append(chr(ord('A') + (num % 26)))
-        num = (num / 26) - 1
+        num = (num // 26) - 1
     letters.reverse()
     return ''.join(letters)
 
